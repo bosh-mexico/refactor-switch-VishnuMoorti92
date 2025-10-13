@@ -4,6 +4,12 @@ project(bms-monitor)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Add source files
+add_executable(PaymentCheckout
+    PaymentCheckout.cpp
+    unit_test_PaymentCheckout.cpp
+)
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
