@@ -9,29 +9,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
-    - name: install build tools
+    - name: install coverage tool
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential g++ cmake
+        sudo apt-get install -y gcovr
+    - name: setup cmake
+      run: sudo apt install cmake
 
-    - name: configure with cmake
+    - name: build
       run: |
-        mkdir build
-        cd build
-        cmake ..
+        cmake -S . -B build
+        cmake --build build
       
-    - name: build project
-      run: |
-        cd build
-        cmake --build .
-      
-    - name: run tests
-      run: |
-        cd build
-        ctest --output-on-failure
+    - name: run
+      run: build/test-monitor
 
-    - name: verify build artifacts
-      run: |
-        echo "Build completed successfully"
-        ls -la build/
+    - name: collect coverage
+      run: gcovr --gcov-exclude=".*test.*" -r . --html --html-details -o coverage.html --print-summary
+
+    - name: create coverage artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: ./*.html
+        retention-days: 7
